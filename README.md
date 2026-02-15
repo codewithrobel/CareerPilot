@@ -31,4 +31,4 @@ CareerPilot is a Spring Boot based backend application for managing:
    mvn spring-boot:run
 
 Server runs on:
-http://localhost:9090
+http://localhost:9091
