@@ -22,7 +22,7 @@ WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 
 # Expose port (Render will use PORT env variable)
-EXPOSE 8080
+EXPOSE 9091
 
 # Run the jar
-ENTRYPOINT ["sh", "-c", "java -jar app.jar --server.port=${PORT:-8080}"]
+ENTRYPOINT ["sh", "-c", "java -jar app.jar --server.port=${PORT:-9091}"]
