@@ -3,19 +3,25 @@ package com.in.service;
 import com.in.repository.ApplicationRepository;
 import com.in.repository.InterviewRepository;
 import com.in.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @Service
-@RequiredArgsConstructor
 public class DashboardService {
 
     private final UserRepository userRepository;
     private final InterviewRepository interviewRepository;
     private final ApplicationRepository applicationRepository;
+
+    public DashboardService(UserRepository userRepository,
+                            InterviewRepository interviewRepository,
+                            ApplicationRepository applicationRepository) {
+        this.userRepository = userRepository;
+        this.interviewRepository = interviewRepository;
+        this.applicationRepository = applicationRepository;
+    }
 
     public Map<String, Object> getAdminStats() {
 
