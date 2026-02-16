@@ -50,8 +50,9 @@ public class SecurityConfig {
                         .requestMatchers(org.springframework.http.HttpMethod.PUT, "/interviews/**").hasRole("ADMIN")
                         .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/interviews/**").hasRole("ADMIN")
 
-                        // Anyone can view interviews
-                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/interviews/**").permitAll()
+                        // USER & ADMIN can view interviews
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/interviews", "/interviews/**")
+                        .hasAnyRole("USER", "ADMIN")
 
                         // ✅ Application APIs (only USER & ADMIN)
                         .requestMatchers("/applications/**").hasAnyRole("USER", "ADMIN")
