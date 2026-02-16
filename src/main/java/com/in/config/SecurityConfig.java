@@ -44,8 +44,14 @@ public class SecurityConfig {
                         // ✅ Public auth APIs
                         .requestMatchers("/auth/login", "/auth/register").permitAll()
 
-                        // ✅ Interview APIs (login required for USER & ADMIN)
-                        .requestMatchers("/interviews/**").hasAnyRole("USER", "ADMIN")
+                        // ✅ Interview APIs
+                        // Only ADMIN can create/update/delete interviews
+                        .requestMatchers(org.springframework.http.HttpMethod.POST, "/interviews/**").hasRole("ADMIN")
+                        .requestMatchers(org.springframework.http.HttpMethod.PUT, "/interviews/**").hasRole("ADMIN")
+                        .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/interviews/**").hasRole("ADMIN")
+
+                        // USER & ADMIN can view interviews
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/interviews/**").hasAnyRole("USER", "ADMIN")
 
                         // ✅ Application APIs (only USER & ADMIN)
                         .requestMatchers("/applications/**").hasAnyRole("USER", "ADMIN")
