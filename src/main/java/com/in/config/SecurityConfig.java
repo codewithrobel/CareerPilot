@@ -11,6 +11,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @EnableMethodSecurity
@@ -54,8 +56,14 @@ public class SecurityConfig {
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/interviews", "/interviews/**")
                         .hasAnyRole("USER", "ADMIN")
 
-                        // ✅ Application APIs (only USER & ADMIN)
-                        .requestMatchers("/applications/**").hasAnyRole("USER", "ADMIN")
+                        // ✅ Application APIs
+                        // USER can APPLY (POST)
+                        .requestMatchers(org.springframework.http.HttpMethod.POST, "/applications/**")
+                        .hasRole("USER")
+
+                        // ADMIN can VIEW all applications
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/applications/**")
+                        .hasRole("ADMIN")
 
                         // ✅ Admin only APIs
                         .requestMatchers("/admin/**").hasRole("ADMIN")
@@ -76,4 +84,5 @@ public class SecurityConfig {
             throws Exception {
         return config.getAuthenticationManager();
     }
+
 }
