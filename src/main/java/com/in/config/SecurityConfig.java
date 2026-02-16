@@ -33,9 +33,12 @@ public class SecurityConfig {
 
                         // ✅ Swagger allow
                         .requestMatchers(
+                                "/",
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
-                                "/swagger-ui.html"
+                                "/swagger-ui.html",
+                                "/swagger-resources/**",
+                                "/webjars/**"
                         ).permitAll()
 
                         // ✅ Public auth APIs
