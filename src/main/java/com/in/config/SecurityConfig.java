@@ -44,8 +44,16 @@ public class SecurityConfig {
                         // ✅ Public auth APIs
                         .requestMatchers("/auth/login", "/auth/register").permitAll()
 
-                        // ✅ Role based access
+                        // ✅ Interview APIs (login required for USER & ADMIN)
+                        .requestMatchers("/interviews/**").hasAnyRole("USER", "ADMIN")
+
+                        // ✅ Application APIs (only USER & ADMIN)
+                        .requestMatchers("/applications/**").hasAnyRole("USER", "ADMIN")
+
+                        // ✅ Admin only APIs
                         .requestMatchers("/admin/**").hasRole("ADMIN")
+
+                        // ✅ User profile APIs
                         .requestMatchers("/users/**").hasAnyRole("USER", "ADMIN")
 
                         .anyRequest().authenticated()
