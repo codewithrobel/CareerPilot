@@ -48,37 +48,37 @@ public class JwtFilter extends OncePerRequestFilter {
         // Authorization header nikal rahe hain
         String authHeader = request.getHeader("Authorization");
 
-        // Check karte hain header present hai aur Bearer se start ho raha hai
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+        if (authHeader != null && authHeader.startsWith("Bearer ")
+                && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-            // "Bearer " remove karke actual token nikalte hain
             String token = authHeader.substring(7);
 
             try {
-                // Token validate karke claims extract karte hain
                 Claims claims = jwtUtil.extractAllClaims(token);
 
-                // Email subject se nikalte hain
                 String email = claims.getSubject();
-
-                // Role claim se nikalte hain
                 String role = claims.get("role", String.class);
 
-                // Spring Security authentication object bana rahe hain
-                UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(
-                                email,                     // principal
-                                null,                      // credentials
-                                Collections.singletonList(
-                                        new SimpleGrantedAuthority("ROLE_" + role) // authority
-                                )
-                        );
+                if (email != null && role != null) {
 
-                // Security context me set kar rahe hain
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+                    UsernamePasswordAuthenticationToken authentication =
+                            new UsernamePasswordAuthenticationToken(
+                                    email,
+                                    null,
+                                    Collections.singletonList(
+                                            new SimpleGrantedAuthority("ROLE_" + role.trim().toUpperCase())
+                                    )
+                            );
+
+                    authentication.setDetails(
+                            new org.springframework.security.web.authentication.WebAuthenticationDetailsSource()
+                                    .buildDetails(request)
+                    );
+
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
 
             } catch (Exception e) {
-                // Agar token invalid hai to 401 return karo
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }
