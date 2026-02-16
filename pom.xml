@@ -18,7 +18,12 @@
 		<license/>
 	</licenses>
 	<developers>
-		<developer/>
+	    <developer>
+	        <name>Priyanshu Singh</name>
+	        <email>priyanshusingh@example.com</email>
+	        <organization>CareerPilot</organization>
+	        <organizationUrl>https://github.com/codewithrobel</organizationUrl>
+	    </developer>
 	</developers>
 	<scm>
 		<connection/>
