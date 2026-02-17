@@ -40,17 +40,36 @@ public class SecurityConfig {
                         // Auth APIs
                         .requestMatchers("/auth/login", "/auth/register").permitAll()
 
-                        // Interview
-                        .requestMatchers(org.springframework.http.HttpMethod.POST, "/interviews/**").hasRole("ADMIN")
-                        .requestMatchers(org.springframework.http.HttpMethod.PUT, "/interviews/**").hasRole("ADMIN")
-                        .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/interviews/**").hasRole("ADMIN")
-                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/interviews/**")
+                        // ================= INTERVIEW APIs =================
+
+                        // ADMIN can create/update/delete
+                        .requestMatchers(org.springframework.http.HttpMethod.POST, "/interviews/**")
+                        .hasRole("ADMIN")
+                        .requestMatchers(org.springframework.http.HttpMethod.PUT, "/interviews/**")
+                        .hasRole("ADMIN")
+                        .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/interviews/**")
+                        .hasRole("ADMIN")
+
+                        // USER & ADMIN can view (important fix)
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/interviews", "/interviews/**")
                         .hasAnyRole("USER", "ADMIN")
 
-                        // Applications
+                        // ================= APPLICATION APIs =================
+
+                        // USER can apply
                         .requestMatchers(org.springframework.http.HttpMethod.POST, "/applications/**")
                         .hasRole("USER")
+
+                        // ADMIN can view all applications
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/applications/**")
+                        .hasRole("ADMIN")
+
+                        // ================= USER PROFILE =================
+                        .requestMatchers("/users/**")
+                        .hasAnyRole("USER", "ADMIN")
+
+                        // ================= ADMIN APIs =================
+                        .requestMatchers("/admin/**")
                         .hasRole("ADMIN")
 
                         .anyRequest().authenticated()
