@@ -21,7 +21,6 @@ import java.util.Collections;
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
-    // JwtUtil ko inject kar rahe hain
     private final JwtUtil jwtUtil;
 
     @Override
@@ -29,9 +28,10 @@ public class JwtFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain)
             throws ServletException, IOException {
+
         String path = request.getServletPath();
 
-        // Skip Swagger + OpenAPI endpoints completely
+        // Skip Swagger & OpenAPI endpoints
         if (path.contains("swagger") ||
             path.contains("api-docs") ||
             path.contains("webjars")) {
@@ -39,13 +39,12 @@ public class JwtFilter extends OncePerRequestFilter {
             return;
         }
 
-        // Allow preflight CORS requests
+        // Allow CORS preflight
         if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        // Authorization header nikal rahe hain
         String authHeader = request.getHeader("Authorization");
 
         if (authHeader != null && authHeader.startsWith("Bearer ")
@@ -57,16 +56,18 @@ public class JwtFilter extends OncePerRequestFilter {
                 Claims claims = jwtUtil.extractAllClaims(token);
 
                 String email = claims.getSubject();
-                String role = claims.get("role") != null ? claims.get("role").toString() : null;
+                Object roleObj = claims.get("role");
 
-                if (email != null && role != null) {
+                if (email != null && roleObj != null) {
+
+                    String role = roleObj.toString().trim().toUpperCase();
 
                     UsernamePasswordAuthenticationToken authentication =
                             new UsernamePasswordAuthenticationToken(
                                     email,
                                     null,
                                     Collections.singletonList(
-                                            new SimpleGrantedAuthority("ROLE_" + role.toUpperCase().trim())
+                                            new SimpleGrantedAuthority("ROLE_" + role)
                                     )
                             );
 
@@ -79,12 +80,11 @@ public class JwtFilter extends OncePerRequestFilter {
                 }
 
             } catch (Exception e) {
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                return;
+                // Invalid token → clear context but continue
+                SecurityContextHolder.clearContext();
             }
         }
 
-        // Next filter ko call karo
         filterChain.doFilter(request, response);
     }
 }
