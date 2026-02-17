@@ -57,7 +57,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 Claims claims = jwtUtil.extractAllClaims(token);
 
                 String email = claims.getSubject();
-                String role = claims.get("role", String.class);
+                String role = claims.get("role") != null ? claims.get("role").toString() : null;
 
                 if (email != null && role != null) {
 
@@ -66,7 +66,7 @@ public class JwtFilter extends OncePerRequestFilter {
                                     email,
                                     null,
                                     Collections.singletonList(
-                                            new SimpleGrantedAuthority("ROLE_" + role.trim().toUpperCase())
+                                            new SimpleGrantedAuthority("ROLE_" + role.toUpperCase().trim())
                                     )
                             );
 
